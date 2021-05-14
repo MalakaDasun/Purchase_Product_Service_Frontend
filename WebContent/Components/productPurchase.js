@@ -1,3 +1,12 @@
+$(document).ready(function()
+{
+if ($("#alertSuccess").text().trim() == "")
+{
+$("#alertSuccess").hide();
+}
+$("#alertError").hide();
+});
+
 $(document).on("click", "#btnSave", function(event)
 {
 // Clear alerts---------------------
@@ -6,6 +15,14 @@ $(document).on("click", "#btnSave", function(event)
  $("#alertError").text("");
  $("#alertError").hide();
 
+//Form validation-------------------
+ var status = validateProductPurchaseForm();
+ if (status != true)
+ {
+ $("#alertError").text(status);
+ $("#alertError").show();
+ return;
+ }
  
 var type = ($("#hidItemIDSave").val() == "") ? "POST" : "PUT";
  $.ajax(
@@ -21,6 +38,30 @@ var type = ($("#hidItemIDSave").val() == "") ? "POST" : "PUT";
  });
 });
 
+//CLIENT-MODEL================================================================
+function validateProductPurchaseForm()
+{
+// DATE
+if ($("#date").val().trim() == "")
+{
+return "Insert Date.";
+}
+// TOTAL
+if ($("#total").val().trim() == "")
+{
+return "Insert Total price.";
+}
+// is numerical value
+var tmpPrice = $("#total").val().trim();
+if (!$.isNumeric(tmpPrice))
+{
+return "Insert a numerical value for Item Price.";
+}
+// convert to decimal price
+$("#total").val(parseFloat(tmpPrice).toFixed(2));
+
+return true;
+}
 
 function onItemSaveComplete(response, status)
 {
